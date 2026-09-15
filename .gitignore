@@ -1,0 +1,23 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Data & Model cache binaries
+data/*.csv
+models/*.joblib
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+forecast_output.txt

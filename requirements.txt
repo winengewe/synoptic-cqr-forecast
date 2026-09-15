@@ -1,0 +1,26 @@
+# Time Series Weather Forecasting Project
+# Core numerical and data manipulation
+numpy>=1.26.0
+pandas>=2.1.0
+
+# Machine learning & tree-based forecasting (XGBoost)
+xgboost>=2.0.0
+scikit-learn>=1.4.0
+shap>=0.44.0
+
+# Visualization & plotting
+matplotlib>=3.8.0
+
+# Optional utilities for API data retrieval (e.g., Open-Meteo)
+requests>=2.31.0
+
+
+# 1. Create and activate a virtual environment
+# python -m venv venv
+# source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# 2. Upgrade pip
+# pip install --upgrade pip
+
+# 3. Install packages from requirements.txt
+# pip install -r requirements.txt

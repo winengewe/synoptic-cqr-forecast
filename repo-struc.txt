@@ -1,0 +1,25 @@
+synoptic-cqr-forecast/
+├── .github/
+│   └── workflows/
+│       └── forecast.yml           # Scheduled daily CI/CD run
+├── data/                          # Ignored by git: cache & local datasets
+│   └── weather_history.csv
+├── models/                        # Ignored by git: trained weights & bundle
+│   └── model_bundle.joblib
+├── src/
+│   └── synoptic_forecast/
+│       ├── __init__.py            # Makes the directory a clean Python package
+│       ├── data.py                # Open-Meteo ingestion & hourly tendencies
+│       ├── features.py            # Synoptic tabular feature engineering
+│       ├── metrics.py             # Benchmark evaluation scorecard
+│       ├── model.py               # XGBoost pinball loss & non-negative CQR
+│       └── visualization.py       # Time series & residual plots
+├── .dockerignore
+├── .gitignore
+├── docker-compose.yml
+├── Dockerfile
+├── main.py                        # Entry point: Benchmark & calibration scorecard
+├── predict_tomorrow.py            # Entry point: Daily operational inference
+├── pyproject.toml                 # Standard packaging definition (or setup.py)
+├── README.md
+└── requirements.txt

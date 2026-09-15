@@ -1,0 +1,66 @@
+name: Daily Temperature Forecast
+
+on:
+  schedule:
+    # 00:15 UTC guarantees yesterday's 23:00 readings are published
+    - cron: '15 0 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+permissions:
+  contents: write # Needed if committing updated cache/models back
+
+jobs:
+  forecast:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Cache model bundle and weather archive
+        uses: actions/cache@v4
+        with:
+          path: |
+            model_bundle.joblib
+            weather_history.csv
+          key: weather-model-${{ hashFiles('data.py', 'features.py', 'model.py') }}
+          restore-keys: |
+            weather-model-
+
+      - name: Run Operational Forecast
+        id: run_forecast
+        run: |
+          python predict_tomorrow.py | tee forecast_output.txt
+
+      - name: Publish to GitHub Step Summary
+        if: always()
+        run: |
+          echo "### 🌡️ Daily Meteorological Forecast" >> $GITHUB_STEP_SUMMARY
+          echo '```text' >> $GITHUB_STEP_SUMMARY
+          cat forecast_output.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Post Alert to Discord (Optional)
+        if: env.DISCORD_WEBHOOK != ''
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          # Format output for Discord markdown block
+          PAYLOAD=$(python -c '
+          import json
+          with open("forecast_output.txt") as f:
+              text = f.read()
+          print(json.dumps({"content": f"```text\n{text}\n```"}))
+          ')
+          curl -H "Content-Type: application/json" -X POST -d "$PAYLOAD" "$DISCORD_WEBHOOK"
