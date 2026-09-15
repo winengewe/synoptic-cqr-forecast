@@ -50,10 +50,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Stage new observations and retrained model weights
-          git add data/weather_history.csv models/model_bundle.joblib
+          # Use -f to force-stage artifacts ignored by root .gitignore
+          git add -f data/weather_history.csv models/model_bundle.joblib
 
-          # Check for changes before committing; [skip ci] stops recurring loop triggers
+          # Check for changes before committing; [skip ci] prevents recursive triggers
           if ! git diff --staged --quiet; then
             git commit -m "chore(automation): sync model weights and weather history [skip ci]"
             git push origin main
