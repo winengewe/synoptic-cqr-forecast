@@ -2,12 +2,12 @@ name: Daily Temperature Forecast
 
 on:
   schedule:
-    # 00:15 UTC guarantees yesterday's 23:00 readings are published
+    # Triggers daily at 00:15 UTC to ingest the previous day's finalized 23:00 readings
     - cron: '15 0 * * *'
-  workflow_dispatch: # Allows manual trigger from GitHub UI
+  workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
 
 permissions:
-  contents: write # Needed if committing updated cache/models back
+  contents: write
 
 jobs:
   forecast:
@@ -17,36 +17,37 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
 
-      - name: Install dependencies
+      - name: Install dependencies and synoptic package
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install -e .
 
-      - name: Cache model bundle and weather archive
+      - name: Restore data and model caches
         uses: actions/cache@v4
         with:
           path: |
-            model_bundle.joblib
-            weather_history.csv
-          key: weather-model-${{ hashFiles('data.py', 'features.py', 'model.py') }}
+            data/weather_history.csv
+            models/model_bundle.joblib
+          key: synoptic-artifacts-${{ hashFiles('src/synoptic_forecast/**', 'pyproject.toml') }}
           restore-keys: |
-            weather-model-
+            synoptic-artifacts-
 
-      - name: Run Operational Forecast
+      - name: Execute Live Operational Forecast
         id: run_forecast
         run: |
           python predict_tomorrow.py | tee forecast_output.txt
 
-      - name: Publish to GitHub Step Summary
+      - name: Publish Step Summary
         if: always()
         run: |
-          echo "### 🌡️ Daily Meteorological Forecast" >> $GITHUB_STEP_SUMMARY
+          echo "### 🏴󠁧󠁢󠁳󠁣󠁴󠁿 Operational Weather Forecast" >> $GITHUB_STEP_SUMMARY
           echo '```text' >> $GITHUB_STEP_SUMMARY
           cat forecast_output.txt >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
@@ -56,7 +57,6 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
-          # Format output for Discord markdown block
           PAYLOAD=$(python -c '
           import json
           with open("forecast_output.txt") as f:
