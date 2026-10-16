@@ -10,6 +10,8 @@ shap>=0.44.0
 
 # Visualization & plotting
 matplotlib>=3.8.0
+plotly>=5.20.0
+streamlit>=1.35.0
 
 # Optional utilities for API data retrieval (e.g., Open-Meteo)
 requests>=2.31.0

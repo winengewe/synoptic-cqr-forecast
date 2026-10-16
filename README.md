@@ -5,6 +5,7 @@
 [![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/vince/synoptic-cqr-forecast/forecast.yml?branch=main&style=flat-square&logo=githubactions&logoColor=white)](https://github.com/vince/synoptic-cqr-forecast/actions)
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-blue?style=flat-square&logo=python)](https://www.python.org/)
 [![Interval Coverage](https://img.shields.io/badge/CQR_Coverage-81.97%25-success?style=flat-square)](https://github.com/vince/synoptic-cqr-forecast)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](http://localhost:8501)
 [![Docker Ready](https://img.shields.io/badge/docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 
@@ -64,6 +65,7 @@ Evaluated on the out-of-sample Glasgow winter benchmark window (November–Decem
 | **Core Runtime** | Python 3.11, NumPy, Pandas | Base runtime, data manipulation, and vectorized math |
 | **Modeling Engine** | XGBoost (`reg:quantileerror`) | Non-linear tree boosting optimized for pinball loss functions |
 | **Uncertainty Calibration** | Split Conformal Prediction (CQR) | Distribution-free finite-sample guarantees with non-negative score guards |
+| **Interactive Dashboard** | Streamlit, Plotly | Interactive operational portal with live forecast, verification, SHAP, and simulator |
 | **Data Ingestion** | Open-Meteo Historical & Forecast APIs | Ingestion of hourly pressure, temperature, dew point, and wind components |
 | **Packaging & Structure** | PEP 621 (`pyproject.toml`), `src/` layout | Modular, installable Python library (`synoptic_forecast`) |
 | **Containerization** | Docker, Docker Compose | Multi-stage image with OpenMP runtime (`libgomp1`) for runtime parity |
@@ -92,7 +94,8 @@ synoptic-cqr-forecast/
 │       └── visualization.py       # Time-series validation and uncertainty band visualization
 ├── .dockerignore
 ├── .gitignore
-├── docker-compose.yml             # Orchestration for containerized training and inference
+├── app.py                         # Streamlit interactive operational forecast & verification dashboard
+├── docker-compose.yml             # Orchestration for containerized training, inference, and dashboard
 ├── Dockerfile                     # Multi-stage container build with C-runtime libraries
 ├── main.py                        # Benchmark runner and historical evaluation entry point
 ├── predict_tomorrow.py            # Operational live daily inference entry point
@@ -108,7 +111,7 @@ synoptic-cqr-forecast/
 ### 2. Installation
 Clone the repository and install the required dependencies using pip:
 ```bash
-git clone [https://github.com/](https://github.com/)winengewe/synoptic-cqr-forecast.git
+git clone https://github.com/winengewe/synoptic-cqr-forecast.git
 cd synoptic-cqr-forecast
 ```
 
@@ -127,6 +130,17 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
+### 3. Launch the Streamlit Dashboard
+```bash
+streamlit run app.py
+```
+Open **[http://localhost:8501](http://localhost:8501)** in your browser to access:
+* **🛰️ Operational 24h Forecast:** Live Open-Meteo ingestion, conformal $[P_{10}, P_{90}]$ prediction bands, Frost & Plunging Front alerts.
+* **📊 Benchmark Scorecard & Verification:** Full metrics verification table on the test split, zoomable time series, and outlier diagnostics.
+* **🧠 Synoptic Explainability & SHAP:** Feature importance ranking and SHAP atmospheric driver attributions.
+* **🎛️ What-If Synoptic Simulator:** Interactive weather simulator with sliders and meteorological presets (*Polar Arctic Blast*, *Atlantic Cold Front*, etc.).
+
+### 4. Command-Line Entry Points
 Execute benchmark evaluation and train calibration bundle:
 ```bash
 python main.py
@@ -135,6 +149,18 @@ python main.py
 Generate tomorrow's live operational forecast:
 ```bash
 python predict_tomorrow.py
+```
+
+### 5. Docker Deployment
+```bash
+# Run the interactive dashboard
+docker compose up dashboard
+
+# Run daily inference
+docker compose up forecast
+
+# Run benchmark training
+docker compose up train
 ```
 
 ## Usage & Operational Output
