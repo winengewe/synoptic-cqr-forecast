@@ -2,7 +2,7 @@
 
 > Synoptic-aware temperature forecasting with distribution-free Conformalized Quantile Regression (CQR) for Glasgow, Scotland.
 
-[![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/vince/synoptic-cqr-forecast/forecast.yml?branch=main&style=flat-square&logo=githubactions&logoColor=white)](https://github.com/vince/synoptic-cqr-forecast/actions)
+[![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/winengewe/synoptic-cqr-forecast/forecast.yml?branch=main&style=flat-square&logo=githubactions&logoColor=white)](https://github.com/winengewe/synoptic-cqr-forecast/actions)
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-blue?style=flat-square&logo=python)](https://www.python.org/)
 [![Interval Coverage](https://img.shields.io/badge/CQR_Coverage-81.97%25-success?style=flat-square)](https://github.com/vince/synoptic-cqr-forecast)
 [![Streamlit App](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](http://localhost:8501)
